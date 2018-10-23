@@ -3,15 +3,17 @@ pipeline {
     kubernetes {
       label 'maven-pod-template'
       defaultContainer 'maven-container'
-      yamlFile 'KubernetesPod.yaml'
+      yamlFile 'KubernetesJDK11.yaml'
     }
   }
   stages {
-    stage('Build') {
+    stage('JDK 11 Build & Test') {
       steps {
-        sh 'mvn -B -DskipTests clean package'
+        container('maven-container-jdk-11') {
+          sh 'mvn --version'
+          sh 'mvn -B clean package'
+        }
       }
-    }
     stage('Test') {
       steps {
         sh 'mvn test'
